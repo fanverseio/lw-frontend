@@ -1,17 +1,48 @@
 import { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import UserDashboard from "./UserDashboard";
 
 function App() {
+  const [token, setToken] = useState(null);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<AuthPage setToken={setToken} />} />
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute token={token}>
+              <UserDashboard token={token} />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
+}
+
+function AuthPage({ setToken }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignIn, setIsSignIn] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (isSignIn) {
-      alert(`Sign In\nEmail: ${email}\nPassword: ${password}`);
+    if (email == "dummyaccount@gmail.com" && password == "dummy123") {
+      setToken("dummy-token-123");
+      navigate("/dashboard");
     } else {
-      alert(`Sign Up\nEmail: ${email}\nPassword: ${password}`);
+      setError("Wrong username or password");
     }
   };
 
@@ -21,6 +52,7 @@ function App() {
       <h2 className="font-light text-gray-800 mb-4">
         {isSignIn ? "Sign In" : "Sign Up"}
       </h2>
+      {error && <div className="text-red-500 mb-2">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
@@ -68,6 +100,9 @@ function App() {
       </button>
     </div>
   );
+}
+function ProtectedRoute({ token, children }) {
+  return token ? children : <Navigate to="/" replace />;
 }
 
 export default App;
