@@ -7,6 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import UserDashboard from "./UserDashboard";
+import axios from "axios";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -35,14 +36,26 @@ function AuthPage({ setToken }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email == "dummyaccount@gmail.com" && password == "dummy123") {
-      setToken("dummy-token-123");
-      navigate("/dashboard");
-    } else {
-      setError("Wrong username or password");
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      if (response.data.token) {
+        setToken(response.data.token);
+        navigate("/dashboard");
+      } else {
+        setError("Authentication failed. Please try again.");
+      }
+    } catch (error) {
+      setError("Something has gone wrong. ");
     }
   };
 
