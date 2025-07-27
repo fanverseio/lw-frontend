@@ -8,54 +8,133 @@ import {
 } from "react-router-dom";
 import UserDashboard from "./UserDashboard";
 import axios from "axios";
+import VerifyEmail from "./VerifyEmail";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 
 function App() {
   const [token, setToken] = useState(null);
+  const [pendingEmail, setPendingEmail] = useState("");
+
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+  };
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthPage setToken={setToken} />} />
+        <Route
+          path="/"
+          element={
+            <AuthPage setToken={setToken} setPendingEmail={setPendingEmail} />
+          }
+        />
         <Route
           path="dashboard"
           element={
             <ProtectedRoute token={token}>
-              <UserDashboard token={token} />
+              <UserDashboard token={token} logout={logout} />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/verify-email"
+          element={<VerifyEmail pendingEmail={pendingEmail} />}
+        />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   );
 }
 
-function AuthPage({ setToken }) {
+function AuthPage({ setToken, setPendingEmail }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignIn, setIsSignIn] = useState(true);
   const [error, setError] = useState("");
+  const [showResetButton, setShowResetButton] = useState(false);
+  const [showResendButton, setShowResendButton] = useState(false);
+  const [showForgotPasswordLink, setShowForgotPasswordLink] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowResetButton(false);
+    setShowResendButton(false);
+    setShowForgotPasswordLink(false);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        {
-          email,
-          password,
+    if (isSignIn) {
+      //signing in
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/auth/login",
+          {
+            email,
+            password,
+          }
+        );
+
+        if (response.data.token) {
+          setToken(response.data.token);
+          navigate("/dashboard");
+        } else {
+          setError("Authentication failed. Please try again.");
         }
-      );
-
-      if (response.data.token) {
-        setToken(response.data.token);
-        navigate("/dashboard");
-      } else {
-        setError("Authentication failed. Please try again.");
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          const errorMessage = error.response.data.error;
+          setError(errorMessage);
+          if (errorMessage === "Invalid password") {
+            setShowForgotPasswordLink(true);
+          }
+        }
       }
-    } catch (error) {
-      setError("Something has gone wrong. ");
+    } else {
+      //signing up
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/auth/register",
+          {
+            email,
+            password,
+          }
+        );
+
+        if (response.data.user) {
+          setPendingEmail(email);
+          navigate("/verify-email");
+        } else {
+          setError("Registration failed. Please try again.");
+        }
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          const errorMessage = error.response.data.error;
+
+          if (errorMessage === "Email already registered and verified") {
+            setError(errorMessage);
+            setShowResetButton(true);
+          } else if (
+            errorMessage === "Email already registered but not yet verified"
+          ) {
+            setPendingEmail(email);
+            setError("Email already registered but not yet verified.");
+            setShowResendButton(true);
+          } else {
+            setError("Something has gone wrong during registration.");
+          }
+        }
+      }
     }
   };
 
@@ -66,6 +145,34 @@ function AuthPage({ setToken }) {
         {isSignIn ? "Sign In" : "Sign Up"}
       </h2>
       {error && <div className="text-red-500 mb-2">{error}</div>}
+
+      {showForgotPasswordLink && (
+        <button
+          className="mt-2 text-blue-500 hover:underline text-sm"
+          onClick={() => navigate("/forgot-password")}
+        >
+          Forgot your password?
+        </button>
+      )}
+      {showResetButton && (
+        <button
+          className="mt-4 text-blue-500 hover:underline"
+          onClick={() => navigate("/forgot-password")}
+        >
+          Reset Password
+        </button>
+      )}
+      {showResendButton && (
+        <button
+          className="mt-4 text-blue-500 hover:underline"
+          onClick={() => {
+            navigate("/verify-email");
+          }}
+        >
+          {" "}
+          Resend Verification Email
+        </button>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
@@ -92,7 +199,13 @@ function AuthPage({ setToken }) {
       </form>
       <button
         className="mt-4 text-blue-500 hover:underline"
-        onClick={() => setIsSignIn((prev) => !prev)}
+        onClick={() => {
+          setIsSignIn((prev) => !prev);
+          setError("");
+          setShowResetButton(false);
+          setShowResendButton(false);
+          setShowForgotPasswordLink(false);
+        }}
         type="button"
       >
         {isSignIn
@@ -114,6 +227,7 @@ function AuthPage({ setToken }) {
     </div>
   );
 }
+
 function ProtectedRoute({ token, children }) {
   return token ? children : <Navigate to="/" replace />;
 }
