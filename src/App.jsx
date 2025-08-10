@@ -13,7 +13,7 @@ import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
 
 function App() {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const [pendingEmail, setPendingEmail] = useState("");
 
   const logout = () => {
@@ -78,6 +78,7 @@ function AuthPage({ setToken, setPendingEmail }) {
         );
 
         if (response.data.token) {
+          localStorage.setItem("token", response.data.token); //
           setToken(response.data.token);
           navigate("/dashboard");
         } else {
