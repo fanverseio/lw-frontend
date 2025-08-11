@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { pathService } from "./services/pathService";
 import PathCard from "./components/PathCard";
 
+import CreatePath from "./components/CreatePath";
+import EditPath from "./components/EditPath";
+
 function UserDashboard({ token, logout }) {
   const navigate = useNavigate();
 
@@ -11,6 +14,11 @@ function UserDashboard({ token, logout }) {
   const [paths, setPaths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // modal states
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingPath, setEditingPath] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -34,6 +42,45 @@ function UserDashboard({ token, logout }) {
       setLoading(false);
     }
   };
+  const handleCreatePath = async (data) => {
+    try {
+      await pathService.createPath(token, data);
+      fetchPaths();
+      setShowCreateModal(false);
+    } catch (error) {
+      console.error("Error creating path:", error);
+      setError("Failed to create path. Please try again.");
+    }
+  };
+
+  const handleEditPath = (path) => {
+    setEditingPath(path);
+    setShowEditModal(true);
+  };
+
+  const handleUpdatePath = async (pathId, pathData) => {
+    try {
+      await pathService.updatePath(token, pathId, pathData);
+      fetchPaths();
+      setShowEditModal(false);
+      setEditingPath(null);
+    } catch (error) {
+      console.error("Error updating path:", error);
+      setError("Failed to update path. Please try again.");
+    }
+  };
+
+  const handleDeletePath = async (pathId) => {
+    if (window.confirm("Are you sure you want to delete this path?")) {
+      try {
+        await pathService.deletePath(token, pathId);
+        fetchPaths();
+      } catch (error) {
+        console.error("Error deleting path:", error);
+        setError("Failed to delete path. Please try again.");
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -44,6 +91,14 @@ function UserDashboard({ token, logout }) {
           onClick={() => alert(`Token: ${token}`)}
         >
           Show Auth Token
+        </button>
+        <button
+          className="flex-1 bg-blue-600
+  hover:bg-blue-800 text-white font-bold py-2 px-4
+  rounded"
+          onClick={() => setShowCreateModal(true)}
+        >
+          Create New Path
         </button>
         <button
           className="flex-1 bg-amber-700 hover:bg-amber-950 text-white font-bold py-2 px-4 rounded"
@@ -78,8 +133,8 @@ function UserDashboard({ token, logout }) {
                   <PathCard
                     key={path.id}
                     path={path}
-                    onEdit={() => console.log("Edit", path.id)}
-                    onDelete={() => console.log("Delete", path.id)}
+                    onEdit={() => handleEditPath(path)}
+                    onDelete={() => handleDeletePath(path.id)}
                   />
                 ))}
               </div>
@@ -94,6 +149,20 @@ function UserDashboard({ token, logout }) {
           </>
         )}
       </div>
+      <CreatePath
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleCreatePath}
+      />
+      <EditPath
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingPath(null);
+        }}
+        onSubmit={handleUpdatePath}
+        path={editingPath}
+      />
     </div>
   );
 }
