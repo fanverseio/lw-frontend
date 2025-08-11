@@ -52,10 +52,12 @@ function UserDashboard({ token, logout }) {
       setError("Failed to create path. Please try again.");
     }
   };
-
-  const handleEditPath = (path) => {
+  const handleEditPathInfo = (path) => {
     setEditingPath(path);
     setShowEditModal(true);
+  };
+  const handleEditPath = (path) => {
+    navigate(`/path/${path.id}/editor`);
   };
 
   const handleUpdatePath = async (pathId, pathData) => {
@@ -133,8 +135,9 @@ function UserDashboard({ token, logout }) {
                   <PathCard
                     key={path.id}
                     path={path}
-                    onEdit={() => handleEditPath(path)}
+                    onEdit={() => handleEditPathInfo(path)}
                     onDelete={() => handleDeletePath(path.id)}
+                    onEditPath={() => handleEditPath(path)}
                   />
                 ))}
               </div>

@@ -12,6 +12,8 @@ import VerifyEmail from "./VerifyEmail";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
 
+import PathEditor from "./components/PathEditor";
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [pendingEmail, setPendingEmail] = useState("");
@@ -45,6 +47,7 @@ function App() {
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/path/:id/editor" element={<PathEditor />} />
       </Routes>
     </Router>
   );

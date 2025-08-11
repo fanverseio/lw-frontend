@@ -1,6 +1,6 @@
 import React from "react";
 
-function PathCard({ path, onEdit, onDelete }) {
+function PathCard({ path, onEdit, onDelete, onEditPath }) {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "beginner":
@@ -67,17 +67,25 @@ function PathCard({ path, onEdit, onDelete }) {
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(path)}
-            className="flex-1 bg-blue-500
-  hover:bg-blue-600 text-white font-bold py-2 px-4
-  rounded-lg text-sm transition-colors"
+            className="flex-1 bg-blue-500 hover:bg-blue-600
+  text-white font-bold py-2 px-4 rounded-lg text-sm
+  transition-colors"
           >
-            Edit
+            Edit Info
+          </button>
+          <button
+            onClick={() => onEditPath(path)}
+            className="flex-1 bg-green-500 hover:bg-green-600
+  text-white font-bold py-2 px-4 rounded-lg text-sm
+  transition-colors"
+          >
+            Edit Path
           </button>
           <button
             onClick={handleDelete}
-            className="flex-1 bg-red-500
-  hover:bg-red-600 text-white font-bold py-2 px-4
-  rounded-lg text-sm transition-colors"
+            className="flex-1 bg-red-500 hover:bg-red-600
+  text-white font-bold py-2 px-4 rounded-lg text-sm
+  transition-colors"
           >
             Delete
           </button>
