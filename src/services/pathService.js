@@ -84,4 +84,39 @@ export const pathService = {
       throw new Error(message);
     }
   },
+
+  // Path nodes and edges
+  async getPathData(token, pathId) {
+    try {
+      const response = await pathAPI.get(`/${pathId}/data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.error || "Failed to fetch path data";
+      throw new Error(message);
+    }
+  },
+
+  async updatePathData(token, pathId, nodes, edges) {
+    try {
+      const response = await pathAPI.put(
+        `/${pathId}/data`,
+        { nodes, edges },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.error || "Failed to update path data";
+      throw new Error(message);
+    }
+  },
 };

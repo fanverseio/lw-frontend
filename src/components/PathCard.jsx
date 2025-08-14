@@ -57,11 +57,9 @@ function PathCard({ path, onEdit, onDelete, onEditPath }) {
           className="flex justify-between
   items-center text-sm text-gray-500 mb-4"
         >
-          <span className="font-medium">
-            {path.estimatedHours}
-            hours
-          </span>
-          <span>ID: {path.id}</span>
+          <span>Estimated Hours: </span>
+
+          <span className="font-medium">{path.estimatedHours}</span>
         </div>
 
         <div className="flex gap-2">
