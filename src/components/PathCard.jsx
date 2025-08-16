@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
-function PathCard({ path, onEdit, onDelete, onEditPath }) {
+function PathCard({ path, onEdit, onDelete, onEditPath, onToggleVisibility }) {
+  const [isToggling, setIsToggling] = useState(false);
+
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "beginner":
@@ -17,6 +19,17 @@ function PathCard({ path, onEdit, onDelete, onEditPath }) {
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this path?")) {
       onDelete(path.id);
+    }
+  };
+
+  const handleToggleVisibility = async () => {
+    setIsToggling(true);
+    try {
+      await onToggleVisibility(path.id, !path.is_public);
+    } catch (error) {
+      console.error("Error toggling visibility:", error);
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -37,13 +50,41 @@ function PathCard({ path, onEdit, onDelete, onEditPath }) {
           >
             {path.title}
           </h3>
-          <span
-            className={`px-2 py-1 rounded-full
+          <div className="flex items-center gap-3">
+            {/* Slide Toggle for Visibility */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-600">
+                {path.is_public ? "Public" : "Private"}
+              </span>
+              <button
+                onClick={handleToggleVisibility}
+                disabled={isToggling}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  path.is_public
+                    ? "bg-emerald-900	focus:ring-emerald-800"
+                    : "bg-yellow-900	focus:ring-yellow-800"
+                } ${
+                  isToggling
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                    path.is_public ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+            {/* Difficulty Badge */}
+            <span
+              className={`px-2 py-1 rounded-full
    text-xs font-semibold
   ${getDifficultyColor(path.difficulty)}`}
-          >
-            {path.difficulty}
-          </span>
+            >
+              {path.difficulty}
+            </span>
+          </div>
         </div>
 
         <p
@@ -58,7 +99,6 @@ function PathCard({ path, onEdit, onDelete, onEditPath }) {
   items-center text-sm text-gray-500 mb-4"
         >
           <span>Estimated Hours: </span>
-
           <span className="font-medium">{path.estimatedHours}</span>
         </div>
 

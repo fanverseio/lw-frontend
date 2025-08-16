@@ -25,6 +25,10 @@ function UserDashboard({ token, logout }) {
     navigate("/");
   };
 
+  const handleBackToPublicPaths = () => {
+    navigate("/");
+  };
+
   useEffect(() => {
     fetchPaths();
   }, []);
@@ -42,6 +46,7 @@ function UserDashboard({ token, logout }) {
       setLoading(false);
     }
   };
+
   const handleCreatePath = async (data) => {
     try {
       await pathService.createPath(token, data);
@@ -52,10 +57,12 @@ function UserDashboard({ token, logout }) {
       setError("Failed to create path. Please try again.");
     }
   };
+
   const handleEditPathInfo = (path) => {
     setEditingPath(path);
     setShowEditModal(true);
   };
+
   const handleEditPath = (path) => {
     navigate(`/path/${path.id}/editor`);
   };
@@ -84,10 +91,42 @@ function UserDashboard({ token, logout }) {
     }
   };
 
+  const handleToggleVisibility = async (pathId, isPublic) => {
+    try {
+      await pathService.togglePathVisibility(token, pathId, isPublic);
+      fetchPaths();
+    } catch (error) {
+      console.error("Error toggling path visibility:", error);
+      setError("Failed to update path visibility. Please try again.");
+    }
+  };
+
+  // get stats
+  const publicPathsCount = paths.filter((path) => path.is_public).length;
+  const privatePathsCount = paths.filter((path) => !path.is_public).length;
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-5xl font-bold mb-8">User Dashboard</h1>
-      <div className="flex flex-row gap-4 w-full max-w-xs">
+
+      {/* Stats */}
+      <div className="flex flex-row gap-4 w-full max-w-4xl mb-4">
+        <div className="flex-1 text-center">
+          <span className="text-sm text-gray-600">
+            Total Paths: {paths.length} | Public: {publicPathsCount} | Private:{" "}
+            {privatePathsCount}
+          </span>
+        </div>
+      </div>
+
+      {/* navigate Buttons */}
+      <div className="flex flex-row gap-4 w-full max-w-2xl mb-8">
+        <button
+          className="flex-1 bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+          onClick={handleBackToPublicPaths}
+        >
+          ← Back to Public Paths
+        </button>
         <button
           className="flex-1 bg-lime-700 hover:bg-lime-950 text-white font-bold py-2 px-4 rounded"
           onClick={() => alert(`Token: ${token}`)}
@@ -95,9 +134,7 @@ function UserDashboard({ token, logout }) {
           Show Auth Token
         </button>
         <button
-          className="flex-1 bg-blue-600
-  hover:bg-blue-800 text-white font-bold py-2 px-4
-  rounded"
+          className="flex-1 bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
           onClick={() => setShowCreateModal(true)}
         >
           Create New Path
@@ -109,6 +146,7 @@ function UserDashboard({ token, logout }) {
           Logout
         </button>
       </div>
+
       <div className="w-full max-w-6xl mt-8">
         <h2 className="text-2xl font-bold mb-6">Your Learning Paths</h2>
 
@@ -138,6 +176,7 @@ function UserDashboard({ token, logout }) {
                     onEdit={() => handleEditPathInfo(path)}
                     onDelete={() => handleDeletePath(path.id)}
                     onEditPath={() => handleEditPath(path)}
+                    onToggleVisibility={handleToggleVisibility}
                   />
                 ))}
               </div>

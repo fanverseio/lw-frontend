@@ -119,4 +119,59 @@ export const pathService = {
       throw new Error(message);
     }
   },
+
+  // Get public paths
+  async getPublicPaths(limit = 20, offset = 0) {
+    try {
+      const response = await pathAPI.get(
+        `/public?limit=${limit}&offset=${offset}`
+      );
+      console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.error || "Failed to fetch public paths";
+      throw new Error(message);
+    }
+  },
+
+  // toggle privacy settings
+  async togglePathVisibility(token, pathId, isPublic) {
+    try {
+      const response = await pathAPI.put(
+        `/${pathId}/visibility`,
+        { isPublic },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.error || "Failed to toggle path visibility";
+      throw new Error(message);
+    }
+  },
+
+  // copy path
+  async copyPath(token, pathId, title) {
+    try {
+      const response = await pathAPI.post(
+        `/${pathId}/copy`,
+        { title },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || "Failed to copy path";
+      throw new Error(message);
+    }
+  },
 };

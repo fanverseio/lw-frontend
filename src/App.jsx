@@ -11,8 +11,8 @@ import axios from "axios";
 import VerifyEmail from "./VerifyEmail";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
-
 import PathEditor from "./components/PathEditor";
+import PublicPathsPage from "./components/PublicPathsPage";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -26,8 +26,9 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<PublicPathsPage token={token} />} />
         <Route
-          path="/"
+          path="/auth"
           element={
             <AuthPage setToken={setToken} setPendingEmail={setPendingEmail} />
           }
