@@ -106,9 +106,9 @@ function UserDashboard({ token, logout }) {
   const privatePathsCount = paths.filter((path) => !path.is_public).length;
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-start min-h-screen py-8">
+      {" "}
       <h1 className="text-5xl font-bold mb-8">User Dashboard</h1>
-
       {/* Stats */}
       <div className="flex flex-row gap-4 w-full max-w-4xl mb-4">
         <div className="flex-1 text-center">
@@ -118,7 +118,6 @@ function UserDashboard({ token, logout }) {
           </span>
         </div>
       </div>
-
       {/* navigate Buttons */}
       <div className="flex flex-row gap-4 w-full max-w-2xl mb-8">
         <button
@@ -146,7 +145,6 @@ function UserDashboard({ token, logout }) {
           Logout
         </button>
       </div>
-
       <div className="w-full max-w-6xl mt-8">
         <h2 className="text-2xl font-bold mb-6">Your Learning Paths</h2>
 

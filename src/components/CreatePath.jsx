@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function CreatePath({ isOpen, onClose, onSubmit, token }) {
+function CreatePath({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",

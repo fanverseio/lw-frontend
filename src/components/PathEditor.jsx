@@ -227,6 +227,12 @@ function PathEditor() {
           >
             ← Back to Dashboard
           </button>
+          <button
+            onClick={() => navigate("/")}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+          >
+            🌐 Public Paths
+          </button>
         </div>
         <button
           onClick={onAddNode}

@@ -121,13 +121,11 @@ export const pathService = {
   },
 
   // Get public paths
-  async getPublicPaths(limit = 20, offset = 0) {
+  async getPublicPaths() {
     try {
-      const response = await pathAPI.get(
-        `/public?limit=${limit}&offset=${offset}`
-      );
+      const response = await pathAPI.get(`/public`);
       console.log(response.data);
-
+  
       return response.data;
     } catch (error) {
       const message =
