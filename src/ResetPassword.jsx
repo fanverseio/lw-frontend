@@ -11,6 +11,9 @@ function ResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
   // Extract email and token from URL parameters
   const email = searchParams.get("email");
   const token = searchParams.get("token");
@@ -43,7 +46,7 @@ function ResetPassword() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/reset-password",
+        `${API_BASE_URL}/api/auth/reset-password`,
         {
           email: email,
           token: token,

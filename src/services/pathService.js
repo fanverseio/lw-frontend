@@ -1,9 +1,12 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000/api/paths";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
+const PATHS_API_URL = `${API_BASE_URL}/api/paths`;
 
 const pathAPI = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: PATHS_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -125,7 +128,7 @@ export const pathService = {
     try {
       const response = await pathAPI.get(`/public`);
       console.log(response.data);
-  
+
       return response.data;
     } catch (error) {
       const message =

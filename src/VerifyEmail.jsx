@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 function VerifyEmail({ pendingEmail }) {
   const [code, setCode] = useState("");
@@ -12,7 +14,7 @@ function VerifyEmail({ pendingEmail }) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/verify-email",
+        `${API_BASE_URL}/api/auth/verify-email`,
         {
           email: pendingEmail,
           code: code,

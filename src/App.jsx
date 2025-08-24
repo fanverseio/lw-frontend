@@ -14,6 +14,9 @@ import ResetPassword from "./ResetPassword";
 import PathEditor from "./components/PathEditor";
 import PublicPathsPage from "./components/PublicPathsPage";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [pendingEmail, setPendingEmail] = useState("");
@@ -73,13 +76,10 @@ function AuthPage({ setToken, setPendingEmail }) {
     if (isSignIn) {
       //signing in
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/auth/login",
-          {
-            email,
-            password,
-          }
-        );
+        const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+          email,
+          password,
+        });
 
         if (response.data.token) {
           localStorage.setItem("token", response.data.token); //
@@ -104,13 +104,10 @@ function AuthPage({ setToken, setPendingEmail }) {
     } else {
       //signing up
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/auth/register",
-          {
-            email,
-            password,
-          }
-        );
+        const response = await axios.post(`${API_BASE_URL}/api/auth/register`, {
+          email,
+          password,
+        });
 
         if (response.data.user) {
           setPendingEmail(email);
