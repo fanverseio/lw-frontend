@@ -67,6 +67,10 @@ function AuthPage({ setToken, setPendingEmail }) {
   const [showForgotPasswordLink, setShowForgotPasswordLink] = useState(false);
   const navigate = useNavigate();
 
+  const handleGoogleSignIn = () => {
+    window.open(`${API_BASE_URL}/api/auth/google`, "_self");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowResetButton(false);
@@ -217,7 +221,7 @@ function AuthPage({ setToken, setPendingEmail }) {
       <button
         className="mt-4 flex items-center justify-center gap-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold py-2 px-4 rounded w-full shadow"
         type="button"
-        onClick={() => alert("Google Sign In clicked")}
+        onClick={handleGoogleSignIn}
       >
         <img
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
