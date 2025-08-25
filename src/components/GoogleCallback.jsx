@@ -10,6 +10,9 @@ function GoogleCallback() {
     const error = searchParams.get("error");
 
     if (token) {
+      localStorage.setItem("token", token);
+      setToken(token);
+
       navigate("/dashboard", { replace: true });
     } else {
       const errorMessage = error || "Authentication failed";
