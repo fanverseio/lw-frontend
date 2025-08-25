@@ -13,6 +13,7 @@ import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
 import PathEditor from "./components/PathEditor";
 import PublicPathsPage from "./components/PublicPathsPage";
+import GoogleCallback from "./GoogleCallback";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
