@@ -11,9 +11,7 @@ function GoogleCallback() {
 
     if (token) {
       localStorage.setItem("token", token);
-      setToken(token);
-
-      navigate("/dashboard", { replace: true });
+      window.location.href = "/dashboard";
     } else {
       const errorMessage = error || "Authentication failed";
       navigate("/auth?error=" + encodeURIComponent(errorMessage), {

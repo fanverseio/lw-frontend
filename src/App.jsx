@@ -37,10 +37,7 @@ function App() {
             <AuthPage setToken={setToken} setPendingEmail={setPendingEmail} />
           }
         />
-        <Route
-          path="/auth/google/callback"
-          element={<GoogleCallback setToken={setToken} />}
-        />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route
           path="dashboard"
           element={
