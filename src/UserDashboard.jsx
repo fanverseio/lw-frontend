@@ -126,12 +126,12 @@ function UserDashboard({ token, logout }) {
         >
           ← Back to Public Paths
         </button>
-        <button
+        {/* <button
           className="flex-1 bg-lime-700 hover:bg-lime-950 text-white font-bold py-2 px-4 rounded"
           onClick={() => alert(`Token: ${token}`)}
         >
           Show Auth Token
-        </button>
+        </button> */}
         <button
           className="flex-1 bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
           onClick={() => setShowCreateModal(true)}
